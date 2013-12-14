@@ -12,7 +12,7 @@
 
 #include <KDE/KApplication>
 #include <KDE/KLocale>
-#include <KDE/KAboutData>
+#include <k4aboutdata.h>
 #include <KDE/KCmdLineArgs>
 #include <KDE/KConfig>
 #include <KDE/KConfigGroup>
@@ -40,7 +40,7 @@ using namespace Marble;
 // QApplication. Therefore we need to parse the current setting 
 // in this unusual place :-/
 
-QString readGraphicsSystem( int argc, char *argv[], const KAboutData& aboutData )
+QString readGraphicsSystem( int argc, char *argv[], const K4AboutData& aboutData )
 {    
     QCoreApplication app( argc, argv );
     KComponentData componentData( aboutData, KComponentData::SkipMainComponentRegistration );
@@ -61,12 +61,12 @@ QString readGraphicsSystem( int argc, char *argv[], const KAboutData& aboutData 
 
 int main ( int argc, char *argv[] )
 {
-    KAboutData aboutData( "marble", 0,
+    K4AboutData aboutData( "marble", 0,
                           ki18n( "Marble Virtual Globe" ),
                           ControlView::applicationVersion().toLatin1(),
                           ki18n( "A World Atlas." ),
-                          KAboutData::License_LGPL,
-                          ki18n( "(c) 2007-2014" ), // FIXME: use subs() here and replace 2012 by %1
+                          K4AboutData::License_LGPL,
+                          ki18n( "(c) 2007-2014" ), // FIXME: use subs() here and replace 2014 by %1
                           KLocalizedString(),
                           "http://edu.kde.org/marble" );
 

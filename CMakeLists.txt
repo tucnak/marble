@@ -57,11 +57,11 @@ if(QT4_FOUND)
   ENDIF()
 else()
   set( QT5BUILD TRUE )
-  IF( NOT QTONLY )
-    # TODO: Port to KDE frameworks 5
-    set( QTONLY TRUE )
-    MESSAGE(WARNING "Qt 5 build detected. Disabling KDE support which has not been ported yet. Please compile Marble with Qt 4 if you want to build the Marble KDE desktop application.")
-  ENDIF()
+#  IF( NOT QTONLY )
+#     TODO: Port to KDE frameworks 5
+#     set( QTONLY TRUE )
+#     MESSAGE(WARNING "Qt 5 build detected. Disabling KDE support which has not been ported yet. Please compile Marble with Qt 4 if you want to build the Marble KDE desktop application.")
+#  ENDIF()
 
   find_package(Qt5Core REQUIRED)
   find_package(Qt5Xml REQUIRED)
@@ -115,7 +115,10 @@ endif( QTONLY OR WIN32 OR APPLE )
 ###################################################
 # Check if KDE4 is available
 if( NOT QTONLY AND NOT KDE4_FOUND )
-    find_package(KDE4 REQUIRED)
+    find_package(ECM REQUIRED)
+    set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${ECM_KDE_MODULE_DIR})
+    include(KDEInstallDirs)
+    find_package(KF5 REQUIRED COMPONENTS KDE4Support KI18n)
     marble_set_package_properties( KDE4 PROPERTIES DESCRIPTION "technological foundation for KDE applications" )
     marble_set_package_properties( KDE4 PROPERTIES URL "http://kde.org/" )
     marble_set_package_properties( KDE4 PROPERTIES TYPE REQUIRED PURPOSE "KDE version of Marble" )
@@ -127,9 +130,11 @@ endif( NOT QTONLY AND NOT KDE4_FOUND)
 set(PythonSupport_FOUND FALSE)
 
 if( NOT QTONLY )
-macro_log_feature(EXPERIMENTAL_PYTHON_BINDINGS "Experimental Python binding support for the Marble library" "Experimental Python binding support for the Marble library"
-  "http://techbase.kde.org/Development/Languages/Python" FALSE ""
-  "Experimental Python binding support for the Marble library. To activate it pass -DEXPERIMENTAL_PYTHON_BINDINGS=TRUE to cmake.")
+set_package_properties(EXPERIMENTAL_PYTHON_BINDINGS PROPERTIES
+                       URL "http://techbase.kde.org/Development/Languages/Python"
+                       TYPE OPTIONAL
+                       PURPOSE "Experimental Python binding support for the Marble library. To activate it pass -DEXPERIMENTAL_PYTHON_BINDINGS=TRUE to cmake."
+                      )
 endif()
 
 if(EXPERIMENTAL_PYTHON_BINDINGS)
@@ -149,7 +154,11 @@ if(EXPERIMENTAL_PYTHON_BINDINGS)
         set(PYQT4_FOUND)
     endif(PYQT4_FOUND AND PYQT4_VERSION STRLESS "040804")
     if( NOT QTONLY )
-      macro_log_feature(PYQT4_FOUND "PyQt4" "PyQt4 was not found.  It is needed by marble python plugins to run. " "http://www.riverbankcomputing.co.uk/software/pyqt/intro" FALSE)
+      set_package_properties(PYTHONQT4_FOUND PROPERTIES
+                             URL "http://www.riverbankcomputing.co.uk/software/pyqt/intro"
+                             TYPE OPTIONAL
+                             PURPOSE "PyQt4"
+                            )
     endif()
 
     if (PYTHONLIBRARY_FOUND AND SIP_FOUND AND PYQT4_FOUND)
@@ -157,9 +166,11 @@ if(EXPERIMENTAL_PYTHON_BINDINGS)
     endif (PYTHONLIBRARY_FOUND AND SIP_FOUND AND PYQT4_FOUND)
 
     if( NOT QTONLY )
-      macro_log_feature(PythonSupport_FOUND "Python" "KDE Python support"
-      "http://techbase.kde.org/Development/Languages/Python" FALSE ""
-      "Needed for Python bindings to the marble widget.")
+       set_package_properties(PythonSupport_FOUND PROPERTIES
+                              URL "http://techbase.kde.org/Development/Languages/Python"
+                              TYPE OPTIONAL
+                              PURPOSE "Needed for Python bindings to the marble widget."
+                             )
     endif()
 endif(EXPERIMENTAL_PYTHON_BINDINGS)
 

@@ -29,9 +29,11 @@
 #include <QShortcut>
 #include <QNetworkProxy>
 #include <QLabel>
+#include <QDomDocument>
+#include <QDomNodeList>
 
 // KDE
-#include <kaboutdata.h>
+#include <k4aboutdata.h>
 #include <kaction.h>
 #include <kactioncollection.h>
 #include <kapplication.h>
@@ -151,14 +153,17 @@ MarblePart::MarblePart( QWidget *parentWidget, QObject *parent, const QVariantLi
     // This has to happen before any initialization so plugins (for example) can
     // use it during initialization.
     MarbleLocale *marbleLocale = MarbleGlobal::getInstance()->locale();
-    KLocale *kLocale = KGlobal::locale();
-    if ( kLocale->measureSystem() == KLocale::Metric ) {
-        marbleLocale->setMeasurementSystem( MarbleLocale::MetricSystem );
-    }
-    else {
-        marbleLocale->setMeasurementSystem( MarbleLocale::ImperialSystem );
-    }
+    // KF5 TODO: Read Connecting Calls to Catalogs" in ki18n programmer's guide
+    //           and enable translations
+    //     KLocale *kLocale = KGlobal::locale();
+//     if ( kLocale->measureSystem() == KLocale::Metric ) {
+//         marbleLocale->setMeasurementSystem( QLocale::MetricSystem );
+//     }
+//     else {
+//         marbleLocale->setMeasurementSystem( QLocale::ImperialSystem );
+//     }
 
+    marbleLocale->setMeasurementSystem( QLocale::ImperialSystem );
     migrateNewstuffConfigFiles();
 
     m_externalEditorMapping[0] = "";
@@ -219,9 +224,9 @@ ControlView* MarblePart::controlView() const
     return m_controlView;
 }
 
-KAboutData *MarblePart::createAboutData()
+K4AboutData *MarblePart::createAboutData()
 {
-    return new KAboutData( I18N_NOOP( "marble_part" ), 0,
+    return new K4AboutData( I18N_NOOP( "marble_part" ), 0,
                            ki18n( "A Virtual Globe" ),
                            ControlView::applicationVersion().toLatin1() );
 }
@@ -1402,10 +1407,10 @@ void MarblePart::showNewStuffDialog()
 void MarblePart::showUploadNewStuffDialog()
 {
     QString  newStuffConfig = KStandardDirs::locate ( "data", "marble/marble.knsrc" );
-    kDebug() << "KNS config file:" << newStuffConfig;
+    qDebug() << "KNS config file:" << newStuffConfig;
 
     QPointer<KNS3::UploadDialog> dialog( new KNS3::UploadDialog( newStuffConfig, m_controlView ) );
-    kDebug() << "Creating the archive";
+    qDebug() << "Creating the archive";
     dialog->setUploadFile( KUrl( MapWizard::createArchive( m_controlView, m_controlView->marbleWidget()->mapThemeId() ) ) );
     dialog->exec();
     MapWizard::deleteArchive( m_controlView->marbleWidget()->mapThemeId() );
