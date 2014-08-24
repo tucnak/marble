@@ -61,6 +61,8 @@ void PlaybackSoundCueItem::seek( double progress )
 {
 #ifdef HAVE_PHONON
     m_mediaObject.seek( progress * 1000 );
+#else
+    Q_UNUSED( progress )
 #endif
 }
 
