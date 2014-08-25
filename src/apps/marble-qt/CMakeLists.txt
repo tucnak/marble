@@ -6,9 +6,9 @@ if(MSVC)
   set(marble_SRCS ${marble_SRCS} marble.rc)
 endif(MSVC)
 
-if(MINGW AND QT4_FOUND)
+if(MINGW AND QT4BUILD)
    QT4_ADD_RESOURCES2(marble_SRCS marble.rc)
-endif(MINGW AND QT4_FOUND)
+endif(MINGW AND QT4BUILD)
 
 qt_wrap_ui(marble_SRCS ${marble_UI})
 marble_qt4_automoc(${marble_SRCS})
@@ -25,7 +25,7 @@ else (WIN32)
     endif (APPLE)
 endif (WIN32)
 
-if (QT4_FOUND)
+if (QT4BUILD)
   target_link_libraries (
     marble-qt
     ${QT_QTCORE_LIBRARY}
@@ -36,7 +36,6 @@ if (QT4_FOUND)
     ${QT_QTSCRIPT_LIBRARY}
     ${QT_QTMAIN_LIBRARY}
     ${QT_QTDBUS_LIBRARY}
-    Qt5::QDBus
     marbleui
     marblewidget
     astro)

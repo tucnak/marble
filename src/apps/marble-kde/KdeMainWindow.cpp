@@ -19,10 +19,8 @@
 #include <QActionGroup>
 
 // KDE
-#include <kaction.h>
 #include <kactioncollection.h>
 #include <kparts/part.h>
-#include <kparts/componentfactory.h>
 #include <kxmlguifactory.h>
 
 // GeoData
@@ -47,11 +45,9 @@ MainWindow::MainWindow( const QString& marbleDataPath, QWidget *parent )
 
     insertChildClient( m_part );
 
-    setXMLFile( "marbleui.rc" );
-
+    setupGUI( Default, "marbleui.rc" );
     setStandardToolBarMenuEnabled( true );
 
-    createGUI( 0 );
     QList<QAction*> panelActions = m_part->controlView()->setupDockWidgets( this );
     m_part->readTrackingSettings();
     m_part->unplugActionList( "panels_actionlist" );

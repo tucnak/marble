@@ -17,7 +17,7 @@ add_subdirectory( reverse-geocoding )
 add_subdirectory( vehicletracking )
 add_subdirectory( search )
 
-if(NOT QT4_FOUND)
+if(NOT QT4BUILD)
     add_subdirectory( marbleQuick2 )
 endif()
 

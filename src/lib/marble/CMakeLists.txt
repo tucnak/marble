@@ -1,9 +1,5 @@
 PROJECT(marblewidget)
 
-if (QTONLY)
-   cmake_minimum_required(VERSION 2.4.0)
-endif (QTONLY)
-
 macro_optional_find_package(Phonon)
 marble_set_package_properties( Phonon PROPERTIES DESCRIPTION "cross-platform multimedia framework that enables the use of audio and video content" )
 marble_set_package_properties( Phonon PROPERTIES URL "http://qt.digia.com/" )
@@ -29,13 +25,14 @@ INCLUDE_DIRECTORIES(
  ${QT_INCLUDE_DIR}
 )
 
-if( QT4_FOUND )
+if( QT4BUILD )
   INCLUDE(${QT_USE_FILE})
 else()
 INCLUDE_DIRECTORIES(
  ${Qt5WebKitWidgets_INCLUDE_DIRS}
  ${Qt5Xml_INCLUDE_DIRS}
  ${Qt5Concurrent_INCLUDE_DIRS}
+ ${Qt5Quick_INCLUDE_DIRS}
 )
 endif()
 
@@ -46,29 +43,10 @@ INCLUDE(layers/CMakeLists.txt)
 set(GENERIC_LIB_VERSION "0.19.20")
 set(GENERIC_LIB_SOVERSION "20")
 
-if (QTONLY)
-  # ce: don't know why this is needed here - on win32 'O2' is activated by default in release mode
-  if(NOT WIN32)
-    add_definitions (${QT_DEFINITIONS} -O3)
-  endif(NOT WIN32)
-
-  include_directories(
-    ${QT_INCLUDE_DIR}
-  )
-else (QTONLY)
-  if(NOT WIN32)
-    add_definitions (${QT_DEFINITIONS} ${KDE4_DEFINITIONS} -O3)
-  endif(NOT WIN32)
-
-  include_directories(
-    ${KDE4_INCLUDES}
-  )
-endif (QTONLY)
-
 # link_directories (${QT_LIBRARY_DIR})
 ########### next target ###############
 
-if( NOT QT4_FOUND )
+if( QT5BUILD )
     set(marblequick_SRCS MarbleQuickItem.cpp)
 endif()
 
@@ -339,7 +317,7 @@ ADD_LIBRARY(marblewidget SHARED ${marblewidget_SRCS} ${SOURCES_UI_HDRS})
 TARGET_LINK_LIBRARIES (marblewidget astro)
 
 # link with release version of Qt libs
-if( QT4_FOUND )
+if( QT4BUILD )
   TARGET_LINK_LIBRARIES (marblewidget
     ${QT_QTCORE_LIBRARY}
     ${QT_QTDBUS_LIBRARY}
@@ -360,6 +338,9 @@ else()
     ${Qt5WebKitWidgets_LIBRARIES}
     ${Qt5Svg_LIBRARIES}
     ${Qt5Script_LIBRARIES}
+    ${Qt5Quick_LIBRARIES}
+    ${Qt5OpenGL_LIBRARIES}
+    ${Qt5PrintSupport_LIBRARIES}
     Qt5::DBus
     )
 endif()
@@ -394,25 +375,17 @@ set_target_properties(marblewidget PROPERTIES
 )
 
 # choose the correct target install library path
-if(WIN32 AND QTONLY)
+if(WIN32)
   install(TARGETS marblewidget RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX})
-else(WIN32 AND QTONLY)
-  if(APPLE AND QTONLY)
-    install (TARGETS marblewidget LIBRARY DESTINATION
-      ${CMAKE_INSTALL_PREFIX}/Marble.app/Contents/MacOS/lib)
-
-  else(APPLE AND QTONLY)
-    if(QTONLY)
-      install(TARGETS marblewidget LIBRARY DESTINATION ${EXEC_INSTALL_PREFIX}/lib${LIB_SUFFIX})
-    else(QTONLY)
-        install(TARGETS marblewidget  ${INSTALL_TARGETS_DEFAULT_ARGS})
-    endif(QTONLY)
-  endif(APPLE AND QTONLY)
-endif(WIN32 AND QTONLY)
+elseif(APPLE)
+  install(TARGETS marblewidget LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/Marble.app/Contents/MacOS/lib)
+else()
+  install(TARGETS marblewidget LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX})
+endif()
 
 ########### install files ###############
 
-if( NOT QT4_FOUND )
+if( QT5BUILD )
     set(marblequick_HDRS MarbleQuickItem.h)
 endif()
 
